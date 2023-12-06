@@ -1,52 +1,87 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseInterceptors,
+} from '@nestjs/common';
 import { RecipesService } from './recipes.service';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
 
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Recipe } from './entities/recipe.entity';
+import {
+  ApiBadRequestResponse,
+  ApiForbiddenResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiMethodNotAllowedResponse,
+  ApiTags,
+  ApiConsumes,
+  ApiCreatedResponse,
+} from '@nestjs/swagger';
+import { RecipeInformation } from './entities/recipe.entity';
 import { Recipes } from './entities/recipes.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
 
-@ApiTags("Recipes")
-@Controller('recipes')
+@ApiTags('Recipes')
+@Controller('Recipes')
 export class RecipesController {
   constructor(private readonly recipesService: RecipesService) {}
 
   @Post()
-  @ApiResponse({status: 200, description: "success"})
-  @ApiResponse({status: 201, description: "successful create a new recipe"})
-  @ApiResponse({status: 404, description: "page not found"})
-  @ApiResponse({status: 405, description: "method not allowed"})
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiCreatedResponse({ description: 'Created Successfully' })
+  @ApiNotFoundResponse({ description: 'Page Not Found' })
+  @ApiForbiddenResponse({ description: 'Forbidden' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiMethodNotAllowedResponse({ description: 'Method Not Allowed' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   create(@Body() createRecipeDto: CreateRecipeDto) {
     return this.recipesService.create(createRecipeDto);
   }
 
   @Get()
-  @ApiResponse({type: Recipes, status: 200, description: "success"})
-  @ApiResponse({status: 405, description: "method not allowed"})
+  @ApiOkResponse({ type: Recipes, description: 'Success' })
+  @ApiNotFoundResponse({ description: 'Page Not Found' })
+  @ApiForbiddenResponse({ description: 'Forbidden' })
+  @ApiMethodNotAllowedResponse({ description: 'Method Not Allowed' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   findAll() {
     return this.recipesService.findAll();
   }
 
   @Get(':id')
-  @ApiResponse({type: Recipe,status: 200, description: "success", })
-  @ApiResponse({status: 405, description: "method not allowed"})
-  @ApiResponse({status: 404, description: "page not found"})
+  @ApiOkResponse({ type: RecipeInformation, description: 'Success' })
+  @ApiNotFoundResponse({ description: 'Page Not Found' })
+  @ApiForbiddenResponse({ description: 'Forbidden' })
+  @ApiMethodNotAllowedResponse({ description: 'Method Not Allowed' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   findOne(@Param('id') id: string) {
     return this.recipesService.findOne(+id);
   }
 
   @Patch(':id')
-  @ApiResponse({status: 200, description: "success"})
-  @ApiResponse({status: 405, description: "method not allowed"})
-  @ApiResponse({status: 404, description: "page not found"})
+  @ApiOkResponse({ description: 'Success' })
+  @ApiNotFoundResponse({ description: 'Page Not Found' })
+  @ApiForbiddenResponse({ description: 'Forbidden' })
+  @ApiMethodNotAllowedResponse({ description: 'Method Not Allowed' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   update(@Param('id') id: string, @Body() updateRecipeDto: UpdateRecipeDto) {
     return this.recipesService.update(+id, updateRecipeDto);
   }
 
   @Delete(':id')
-  @ApiResponse({status: 200, description: "success"})
-  @ApiResponse({status: 405, description: "method not allowed"})
+  @ApiOkResponse({ description: 'Success' })
+  @ApiNotFoundResponse({ description: 'Page Not Found' })
+  @ApiMethodNotAllowedResponse({ description: 'Method Not Allowed' })
+  @ApiForbiddenResponse({ description: 'Forbidden' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   remove(@Param('id') id: string) {
     return this.recipesService.remove(+id);
   }
