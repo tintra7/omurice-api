@@ -26,7 +26,7 @@ import { User } from './entities/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Users')
-@Controller('Users')
+@Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 

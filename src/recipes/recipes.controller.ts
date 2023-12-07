@@ -28,7 +28,7 @@ import { Recipes } from './entities/recipes.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Recipes')
-@Controller('Recipes')
+@Controller('recipes')
 export class RecipesController {
   constructor(private readonly recipesService: RecipesService) {}
 
