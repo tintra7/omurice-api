@@ -9,4 +9,6 @@ export class User {
   bio: string;
   @ApiProperty()
   name: string;
+  @ApiProperty()
+  id: string;
 }

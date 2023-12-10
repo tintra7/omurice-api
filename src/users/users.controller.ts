@@ -3,14 +3,11 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseInterceptors,
+  Put,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import {
   ApiBadRequestResponse,
   ApiConsumes,
@@ -22,8 +19,11 @@ import {
   ApiTags,
   ApiCreatedResponse,
 } from '@nestjs/swagger';
-import { User } from './entities/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UsersService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 
 @ApiTags('Users')
 @Controller('users')
@@ -39,8 +39,8 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Get(':id')
-  @ApiOkResponse({ type: User, description: 'Success' })
+  @Get()
+  @ApiOkResponse({ type: User, isArray: true, description: 'Success' })
   @ApiNotFoundResponse({ description: 'Page Not Found' })
   @ApiMethodNotAllowedResponse({ description: 'Method Not Allowed' })
   @ApiForbiddenResponse({ description: 'Forbidden' })
@@ -59,7 +59,7 @@ export class UsersController {
     return this.usersService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   @UseInterceptors(FileInterceptor('file'))
   @ApiConsumes('multipart/form-data')
   @ApiOkResponse({ description: 'Success' })

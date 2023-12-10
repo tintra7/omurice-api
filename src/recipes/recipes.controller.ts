@@ -3,10 +3,10 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseInterceptors,
+  Put,
 } from '@nestjs/common';
 import { RecipesService } from './recipes.service';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
@@ -65,7 +65,7 @@ export class RecipesController {
     return this.recipesService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   @ApiOkResponse({ description: 'Success' })
   @ApiNotFoundResponse({ description: 'Page Not Found' })
   @ApiForbiddenResponse({ description: 'Forbidden' })

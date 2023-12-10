@@ -13,4 +13,6 @@ export class RecipeInformation {
   ingredients: Array<string>;
   @ApiProperty()
   steps: Array<string>;
+  @ApiProperty()
+  id: string;
 }
