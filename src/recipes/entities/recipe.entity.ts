@@ -1,12 +1,16 @@
+/* eslint-disable prettier/prettier */
 import { ApiProperty } from '@nestjs/swagger';
 
-export class RecipeInformation {
+export class Recipe {
+  
+  @ApiProperty()
+  id: string;
   @ApiProperty()
   name: string;
   @ApiProperty()
   description: string;
   @ApiProperty()
-  image: string;
+  imageUrl: string;
   @ApiProperty()
   duration: number;
   @ApiProperty()
@@ -14,5 +18,5 @@ export class RecipeInformation {
   @ApiProperty()
   steps: Array<string>;
   @ApiProperty()
-  id: string;
+  userId: string;
 }

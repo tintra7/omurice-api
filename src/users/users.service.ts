@@ -10,11 +10,27 @@ export class UsersService {
   }
 
   findAll() {
-    return `This action returns all users`;
+    return [
+      new CreateUserDto(
+        '6576d5e8c99fd45c856667d7',
+        'Faker',
+        '0384202392',
+        'TrungNghia0',
+        'My bio is 99% loaded.',
+        '6576d9abc99fd45c856667d8123',
+      ),
+    ];
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} user`;
+    return new CreateUserDto(
+      '6576d5e8c99fd45c856667d7',
+      'Faker',
+      '0384202392',
+      'TrungNghia0',
+      'My bio is 99% loaded.',
+      '6576d9abc99fd45c856667d8123',
+    );
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

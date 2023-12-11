@@ -22,9 +22,9 @@ import {
   ApiTags,
   ApiConsumes,
   ApiCreatedResponse,
+  OmitType,
 } from '@nestjs/swagger';
-import { RecipeInformation } from './entities/recipe.entity';
-import { Recipes } from './entities/recipes.entity';
+import { Recipe } from './entities/recipe.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Recipes')
@@ -46,7 +46,11 @@ export class RecipesController {
   }
 
   @Get()
-  @ApiOkResponse({ type: Recipes, description: 'Success' })
+  @ApiOkResponse({
+    type: OmitType(Recipe, ['steps', 'ingredients']),
+    isArray: true,
+    description: 'Success',
+  })
   @ApiNotFoundResponse({ description: 'Page Not Found' })
   @ApiForbiddenResponse({ description: 'Forbidden' })
   @ApiMethodNotAllowedResponse({ description: 'Method Not Allowed' })
@@ -56,7 +60,7 @@ export class RecipesController {
   }
 
   @Get(':id')
-  @ApiOkResponse({ type: RecipeInformation, description: 'Success' })
+  @ApiOkResponse({ type: Recipe, description: 'Success' })
   @ApiNotFoundResponse({ description: 'Page Not Found' })
   @ApiForbiddenResponse({ description: 'Forbidden' })
   @ApiMethodNotAllowedResponse({ description: 'Method Not Allowed' })

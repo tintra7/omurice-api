@@ -1,12 +1,7 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger';
-import { RecipeInformation } from './recipe.entity';
-
-class Recipe extends OmitType(RecipeInformation, [
-  'steps',
-  'ingredients',
-] as const) {}
+import { Recipe } from './recipe.entity';
 
 export class Recipes {
-  @ApiProperty({ type: [Recipe] })
+  @ApiProperty({ type: [OmitType(Recipe, ['steps', 'ingredients'])] })
   result: Recipe[];
 }
