@@ -10,27 +10,29 @@ export class UsersService {
   }
 
   findAll() {
-    return [
-      new CreateUserDto(
-        '6576d5e8c99fd45c856667d7',
-        'Faker',
-        '0384202392',
-        'TrungNghia0',
-        'My bio is 99% loaded.',
-        '6576d9abc99fd45c856667d8123',
-      ),
-    ];
-  }
-
-  findOne(id: number) {
-    return new CreateUserDto(
+    const user = new CreateUserDto(
       '6576d5e8c99fd45c856667d7',
       'Faker',
       '0384202392',
       'TrungNghia0',
       'My bio is 99% loaded.',
-      '6576d9abc99fd45c856667d8123',
+      'https://storage.googleapis.com/file_storage_exampe/Green-Vegetables-Names-in-English-for-Kids.jpg',
     );
+    const { password, ...newUser } = user;
+    return [newUser];
+  }
+
+  findOne(id: number) {
+    const user = new CreateUserDto(
+      '6576d5e8c99fd45c856667d7',
+      'Faker',
+      '0384202392',
+      'TrungNghia0',
+      'My bio is 99% loaded.',
+      'https://storage.googleapis.com/file_storage_exampe/Green-Vegetables-Names-in-English-for-Kids.jpg',
+    );
+    const { password, ...newUser } = user;
+    return newUser;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
