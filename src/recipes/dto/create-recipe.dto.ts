@@ -1,29 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, MaxLength } from 'class-validator';
 
 export class CreateRecipeDto {
-  constructor(
-    id: string,
-    name: string,
-    description: string,
-    image: string,
-    duration: number,
-    ingredients: Array<string>,
-    steps: Array<string>,
-    userId: string,
-  ) {
-    this.id = id;
-    this.name = name;
-    this.description = description;
-    this.image = image;
-    this.duration = duration;
-    this.ingredients = ingredients;
-    this.steps = steps;
-    this.userId = userId;
-  }
-  @ApiProperty()
-  id: string;
+  @IsNotEmpty()
+  @MaxLength(100)
   @ApiProperty()
   name: string;
+  @MaxLength(200)
   @ApiProperty()
   description: string;
   @ApiProperty({ type: 'string', format: 'binary' })
@@ -34,6 +17,7 @@ export class CreateRecipeDto {
   ingredients: Array<string>;
   @ApiProperty()
   steps: Array<string>;
+  @IsNotEmpty()
   @ApiProperty()
   userId: string;
 }

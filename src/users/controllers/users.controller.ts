@@ -1,12 +1,14 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Param,
   Delete,
   UseInterceptors,
   Put,
+  UseGuards,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -17,36 +19,28 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
-  ApiCreatedResponse,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
+import { UserService } from '../services/users/users.service';
+import { UpdateUserDto } from '../dtos/UpdateUser.dto';
+import { User } from '../entities/user.entity';
+import { AuthGuard } from '../guards/auth/auth.guard';
+import mongoose from 'mongoose';
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
-
-  @Post()
-  @ApiBadRequestResponse({ description: 'Bad Request' })
-  @ApiNotFoundResponse({ description: 'Page Not Found' })
-  @ApiCreatedResponse({ description: 'Created Successfully' })
-  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
+  constructor(private readonly userService: UserService) {}
 
   @Get()
+  @UseGuards(AuthGuard)
   @ApiOkResponse({ type: User, isArray: true, description: 'Success' })
   @ApiNotFoundResponse({ description: 'Page Not Found' })
   @ApiMethodNotAllowedResponse({ description: 'Method Not Allowed' })
   @ApiForbiddenResponse({ description: 'Forbidden' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   findAll() {
-    return this.usersService.findAll();
+    return this.userService.fetchAllUsers();
   }
 
   @Get(':id')
@@ -55,8 +49,13 @@ export class UsersController {
   @ApiMethodNotAllowedResponse({ description: 'Method Not Allowed' })
   @ApiForbiddenResponse({ description: 'Forbidden' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const isValid = mongoose.Types.ObjectId.isValid(id);
+    if (!isValid)
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    const user = await this.userService.fetchUserByID(id);
+    if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    return user;
   }
 
   @Put(':id')
@@ -68,8 +67,13 @@ export class UsersController {
   @ApiMethodNotAllowedResponse({ description: 'Method Not Allowed' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  async update(@Param('id') id: string, @Body() userData: UpdateUserDto) {
+    const isValid = mongoose.Types.ObjectId.isValid(id);
+    if (!isValid) throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
+    const updatedUser = await this.userService.update(id, userData);
+    if (!updatedUser)
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    return updatedUser;
   }
 
   @Delete(':id')
@@ -78,7 +82,12 @@ export class UsersController {
   @ApiMethodNotAllowedResponse({ description: 'Method Not Allowed' })
   @ApiForbiddenResponse({ description: 'Forbidden' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  async remove(@Param('id') id: string) {
+    const isValid = mongoose.Types.ObjectId.isValid(id);
+    if (!isValid) throw new HttpException('Invalid ID', HttpStatus.BAD_REQUEST);
+    const deletedUser = await this.userService.delete(id);
+    if (!deletedUser)
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    return deletedUser;
   }
 }

@@ -1,5 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { AppService } from './app.service';
+import { Get } from '@nestjs/common';
 
 @Controller()
 export class AppController {
@@ -7,6 +8,6 @@ export class AppController {
 
   @Get()
   getHello(): string {
-    return this.appService.getHello();
+    return process.env.JWT_SECRET;
   }
 }
